@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+    <head>
+        <script src="Class-1.0.js"></script>
+        <script>
+            class CustomComponent { 
+                constructor(node) {
+                    var schema = node.elementPushPacket("<div id='link'>Click Here</div>");
+                    schema.el.link.addEventListener("click",function() {
+                        History.go("index2:message="+escape("Hello World2!"));
+                    });
+                }
+            }
+            function loadPages() {
+                CSS("body,html","margin:0px;");
+                CSS("div","padding:10px;")
+                // the route "#index"
+                UI.Window.Router.insert('index',/*load*/function(args) {
+                    this.app = {};
+                    this.app.schema = UI.Body.elementPushPacket(
+                        `<div>${unescape(args.message)}</div>`+
+                        `<Component id="component"></Component>`
+                    )
+                    new CustomComponent(this.app.schema.$.component);
+                },/*unload*/function() {
+                    UI.Body.elementsClear();
+                });
+                UI.Window.Router.insert('index2',function(args) {
+                    this.app = {};
+                    this.app.schema = UI.Body.elementPushPacket(
+                        `<div>${unescape(args.message)}</div>`+
+                        "<div id='link'>Click Here</div>"
+                    )
+                    this.app.schema.el.link.addEventListener("click",function() {
+                        History.go("index:message=Hello%20World!");
+                    })
+                },/*unload*/function() {
+                    UI.Body.elementsClear();
+                });
+            }
+            UI.init(function() {
+                loadPages();
+                History.init("index:message=Hello%20World!");
+            });
+        </script>
+    </head>
+    <body>
+    </body>
+</html>
